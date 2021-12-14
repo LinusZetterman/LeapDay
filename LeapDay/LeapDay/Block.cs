@@ -10,20 +10,30 @@ namespace LeapDay
 {
 	class Block : IGameObjects
 	{
-		Point size = new Point(10, 10);
+		public Vector2 pos;
+		public Vector2 size;
+        private Point index;
+		Texture2D texture;
 
-		public void Die()
+        public Block(Texture2D _texture, Vector2 _size, Vector2 _pos)
+        {
+			texture = _texture;
+			size = _size;
+			pos = _pos;
+        }
+
+        public void Die()
 		{
 			throw new NotImplementedException();
 		}
 
 		public void Update(GameTime gt)
 		{
-			throw new NotImplementedException();
+			
 		}
 		public void Draw(SpriteBatch _spriteBatch)
 		{
-			throw new NotImplementedException();
+			_spriteBatch.Draw(texture, new Rectangle((pos + Game1.basePos).ToPoint(), size.ToPoint()), Color.Black);
 		}
 
 	}
