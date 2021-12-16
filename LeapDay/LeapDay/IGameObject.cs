@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace LeapDay
 {
-	public interface IGameObjects
+	public interface IGameObject
 	{
 		public void Die();
 		public void Update(GameTime gt);

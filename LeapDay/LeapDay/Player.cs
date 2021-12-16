@@ -7,23 +7,28 @@ using System.Text;
 
 namespace LeapDay
 {
-    class Player : IGameObjects
+    class Player : IGameObject
     {
         Texture2D texture;
-        Point size = new Point(20, 20);
-        Vector2 pos = new Vector2(100, 100);
+        public Point size = new Point(20, 20);
+        Point gameSize;
+        
+        public Vector2 pos = new Vector2(100, 100);
         Vector2 vel;
+        float baseSpeed = 3;
         float gravAcc = 0.2f;
 
         int jumpsLeft = 2;
         bool isOnGround = false;
-        Point gameSize;
         bool spaceIsPressed = false;
+        bool run = true;
+        int direction = 1;
 
         public Player(Texture2D _texture, Point _gameSize)
         {
             texture = _texture;
             gameSize = _gameSize;
+            vel.X = baseSpeed;
         }
         
         public void Die()
@@ -34,51 +39,96 @@ namespace LeapDay
         public void Update(GameTime gt)
         {
             KeyboardState keyboardState = Keyboard.GetState();
+            
+            HandleWallAndFloorCollisions(gameSize);
 
-            if (jumpsLeft > 0)
-                HandleJumps(keyboardState);
+            HandleJumps(keyboardState);
 
-            HandleWallAndFloorCollisions();
             
             if (!isOnGround)
                 vel.Y += gravAcc;
-            pos += vel;
+            if (run)
+                pos.X += vel.X * direction;
+            pos.Y += vel.Y;
         }
 
-        private void HandleWallAndFloorCollisions()
+        private void HandleWallAndFloorCollisions(Point floor)
         {
-            if (pos.Y + size.Y > gameSize.Y)
+            //Floor collisions
+            if (pos.Y + size.Y > floor.Y)
             {
-                pos.Y = gameSize.Y - size.Y - 1;
+                pos.Y = floor.Y - size.Y;
                 isOnGround = true;
-                vel.Y = 0f;
+                if (vel.Y > 0)
+                    vel.Y = 0f;
                 jumpsLeft = 2;
             }
             else
             {
                 isOnGround = false;
             }
+
+
+            //Wall collisions
+            if (pos.X < 0 || pos.X + size.X >= gameSize.X)
+            {
+                jumpsLeft = 2;
+                if (isOnGround)
+                    run = true;
+                else
+                    run = false;
+
+                if (pos.X < 0)
+                    direction = 1;
+                if (pos.X + size.X >= gameSize.X)
+                    direction = -1;
+            }
+        }
+
+        public void BlockCollision(CollisionDir collisionDir)
+        {
+            if (collisionDir == CollisionDir.Down )
+            {
+
+            }
         }
 
         private void HandleJumps(KeyboardState keyboardState)
         {
-            if (keyboardState.IsKeyDown(Keys.Space))
+            if (jumpsLeft > 0)
             {
-                if (!spaceIsPressed) {
-                    vel.Y = Math.Min(-6, vel.Y - 6);
-                    jumpsLeft--;
-                    spaceIsPressed = true;
+                if (keyboardState.IsKeyDown(Keys.Space))
+                {
+                    run = true;
+                    if (!spaceIsPressed)
+                    {
+                        vel.Y = Math.Min(-6, vel.Y - 6);
+                        jumpsLeft--;
+                        spaceIsPressed = true;
+                    }
                 }
-            }
-            else
-            {
-                spaceIsPressed = false;
+                else
+                {
+                    spaceIsPressed = false;
+                }
             }
         }
 
         public void Draw(SpriteBatch _spriteBatch)
         {
-            _spriteBatch.Draw(texture, new Rectangle(pos.ToPoint(), size), Color.Red);
+            if (jumpsLeft > 0)
+                _spriteBatch.Draw(texture, new Rectangle(pos.ToPoint(), size), Color.Red);
+            else
+                _spriteBatch.Draw(texture, new Rectangle(pos.ToPoint(), size), Color.Blue);
+
         }
+    }
+
+    public enum CollisionDir
+    {
+        Up,
+        Down,
+        Left,
+        Right
     }
 }

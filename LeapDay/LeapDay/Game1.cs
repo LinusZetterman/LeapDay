@@ -17,7 +17,7 @@ namespace LeapDay
 		public static Vector2 basePos = new Vector2(0, 0);
 
 		Point tileNumber;
-		public static List<IGameObjects> GameObjects = new List<IGameObjects>();
+		public static List<IGameObject> GameObjects = new List<IGameObject>();
 		string[] map;
 
 		public Game1()
@@ -115,6 +115,8 @@ namespace LeapDay
             {
 				GameObjects[i].Update(gameTime);
             }
+
+			basePos.Y++;
 
 			base.Update(gameTime);
 		}

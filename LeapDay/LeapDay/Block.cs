@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace LeapDay
 {
-	class Block : IGameObjects
+	class Block : IGameObject
 	{
 		public Vector2 pos;
 		public Vector2 size;
