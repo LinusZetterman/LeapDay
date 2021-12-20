@@ -14,12 +14,13 @@ namespace LeapDay
         Point gameSize;
         
         public Vector2 pos = new Vector2(100, 100);
-        Vector2 vel;
+        public Vector2 vel;
         float baseSpeed = 3;
         float gravAcc = 0.2f;
 
-        int jumpsLeft = 2;
+        int jumpsLeft = 0;
         public bool isOnGround = false;
+        bool wasOnGround = false; //Disables isOnGround if it has not been on ground for the entire round
         bool spaceIsPressed = false;
         bool run = true;
         int direction = 1;
@@ -38,12 +39,18 @@ namespace LeapDay
 
         public void Update(GameTime gt)
         {
+            wasOnGround = false;
+
             KeyboardState keyboardState = Keyboard.GetState();
 
             HandleWallAndFloorCollisions(gameSize);
 
             HandleJumps(keyboardState);
 
+            if (!wasOnGround)
+			{
+                isOnGround = false;
+			}
             
             if (!isOnGround)
                 vel.Y += gravAcc;
@@ -55,70 +62,57 @@ namespace LeapDay
         private void HandleWallAndFloorCollisions(Point floor)
         {
         
-            if (pos.Y + size.Y > floor.Y)
-            {
-                pos.Y = floor.Y - size.Y;
-                isOnGround = true;
-                if (vel.Y > 0)
-                    vel.Y = 0f;
-                jumpsLeft = 2;
-            }
-            else
-            {
-                isOnGround = false;
-            }
+            //if (pos.Y + size.Y > floor.Y)
+            //{
+            //    pos.Y = floor.Y - size.Y;
+            //    isOnGround = true;
+            //    if (vel.Y > 0)
+            //        vel.Y = 0f;
+            //    jumpsLeft = 2;
+            //}
+            //else
+            //{
+            //    isOnGround = false;
+            //}
 
 
-            //Wall collisions
-            if (pos.X < 0 || pos.X + size.X >= gameSize.X)
-            {
-                jumpsLeft = 2;
-                if (isOnGround)
-                    run = true;
-                else
-                    run = false;
+            ////Wall collisions
+            //if (pos.X < 0 || pos.X + size.X >= gameSize.X)
+            //{
+            //    jumpsLeft = 2;
+            //    if (isOnGround)
+            //        run = true;
+            //    else
+            //        run = false;
 
-                if (pos.X < 0)
-                    direction = 1;
-                if (pos.X + size.X >= gameSize.X)
-                    direction = -1;
-            }
+            //    if (pos.X < 0)
+            //        direction = 1;
+            //    if (pos.X + size.X >= gameSize.X)
+            //        direction = -1;
+            //}
         }
 
         public void BlockCollision(CollisionDir collisionDir, float thing)
         {
-            //    if (collisionDir == CollisionDir.Top)
-            //    {
-            //        pos.Y = thing - size.Y;
-            //        isOnGround = true;
-            //        if (vel.Y > 0)
-            //            vel.Y = 0f;
-            //        jumpsLeft = 2;
-            //    }
-            //    if (collisionDir == CollisionDir.Left)
-            //    {
-            //        if (isOnGround)
-            //            run = true;
-            //        else
-            //            run = false;
-
-            //        direction = 1;
-            //    }
-
-            //    if (collisionDir == CollisionDir.Bottom)
-            //    {
-            //    }
-
-            //    if (collisionDir == CollisionDir.Right)
-            //    {
-            //        if (isOnGround)
-            //            run = true;
-            //        else
-            //            run = false;
-
-            //        direction = -1;
-            //    }
-        }
+            if (collisionDir == CollisionDir.Upper)
+            {
+                pos.Y = thing - size.Y;
+				vel.Y = Math.Min((float)vel.Y, 0.0f);
+                isOnGround = true;
+                jumpsLeft = 2;
+                run = true;
+                wasOnGround = true;
+			}
+            if (collisionDir == CollisionDir.Right)
+			{
+                pos.X = thing - size.X;
+                direction = -1;
+                if (isOnGround)
+                    run = true;
+                else
+                    run = false;
+			}
+		}
 
         private void HandleJumps(KeyboardState keyboardState)
         {
@@ -153,8 +147,8 @@ namespace LeapDay
 
     public enum CollisionDir
     {
-        Top,
-        Bottom,
+        Upper,
+        Lower,
         Left,
         Right
     }

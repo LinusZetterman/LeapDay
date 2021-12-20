@@ -7,11 +7,14 @@ using Microsoft.Xna.Framework.Input;
 
 namespace LeapDay
 {
+	//Working on collisions. Collisions are determined by boxes surrounding the player. Player uses wasOnGround to make isOnGround false if it has not been true for the entire frame.
+	//Next step. Implement the other directions and fix the fucking wall collisions.
 	public class Game1 : Game
 	{
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
 
+		public static Texture2D publicPixel;
 		Texture2D pixel;
 
 		public static Vector2 basePos = new Vector2(0, 0);
@@ -44,6 +47,9 @@ namespace LeapDay
 
 			arial = Content.Load<SpriteFont>("Arial");
 
+			publicPixel = new Texture2D(GraphicsDevice, 1, 1);
+			publicPixel.SetData(new[] { Color.White });
+
 			pixel = new Texture2D(GraphicsDevice, 1, 1);
 			pixel.SetData(new[] {Color.White});
 			
@@ -73,7 +79,7 @@ namespace LeapDay
 		private string[] CreateMap()
 		{
 			string[] _stringMap = new string[] {
-				"00000G00000000", //0
+				"00000000000000", //0
 				"00000000000000", //1
 				"00000000000000", //2
 				"00000000000000", //3
@@ -92,8 +98,8 @@ namespace LeapDay
 				"00000000000000", //16
 				"00000000000000", //17
 				"00000000000000", //18
-				"0000000G000000", //19
-				"00000000000000", //20
+				"00000000000000", //19
+				"0000000G000000", //20
 				"00000000000000", //21
 				"00000000000000", //22
 				"00000000000000", //23
@@ -104,7 +110,7 @@ namespace LeapDay
 				"00000000000000", //28
 				"00000000000000", //29
 				"GGGGGGGGGGGGGG",
-            };
+			};
 
 			for (int i = 0; i < _stringMap.Length; i ++)
             {
@@ -134,7 +140,7 @@ namespace LeapDay
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			_spriteBatch.Begin();
+			_spriteBatch.Begin(SpriteSortMode.FrontToBack);
 			for (int i = 0; i < GameObjects.Count; i ++)
             {
 				GameObjects[i].Draw(_spriteBatch);

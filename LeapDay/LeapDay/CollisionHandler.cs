@@ -10,6 +10,20 @@ namespace LeapDay
 {
     class CollisionHandler : IGameObject
     {
+        //Shoud be moved back into loop
+        bool[] collisions = {false, false, false, false}; //Upper, left, lower, right
+        Vector2 upperPos;
+        Vector2 upperSize;
+
+        Vector2 leftPos;
+        Vector2 leftSize;
+
+        Vector2 lowerPos;
+        Vector2 lowerSize;
+
+        Vector2 rightPos;
+        Vector2 rightSize;
+
         public void Die()
         {
             throw new NotImplementedException();
@@ -17,6 +31,12 @@ namespace LeapDay
 
         public void Update(GameTime gt)
         {
+            bool wallCollision = false;
+            bool roofCollision = false;
+            bool floorCollision = false;
+
+            //If collision causes future errors, maybe make a copy of the player pos so that the loop can continue from the original state. No idea how though but you'll figure something out <3
+
             for (int i = 0; i < Game1.GameObjects.Count; i++)
             {
                 //Block collisions
@@ -28,62 +48,83 @@ namespace LeapDay
                         if (Game1.GameObjects[j] is Player)
                         {
                             Player player = (Player)Game1.GameObjects[j];
+                            bool isBlockCollision = DetectCollision(player.pos, player.size.ToVector2(), block.pos, block.size); //Checks if player and block collision är 
 
-                            if ((player.pos.X < block.pos.X + block.size.X && player.pos.X + player.size.X > block.pos.X) && (player.pos.Y < block.pos.Y + block.size.Y && player.pos.Y + player.size.Y > block.pos.Y)) //FEL GREJ
+                            if (isBlockCollision) 
                             {
-                                Vector2 deltaPos = new Vector2(player.pos.Y - block.pos.Y, player.pos.X - block.pos.X);
-                                double angle = Math.Atan2(deltaPos.Y, deltaPos.X);
-                                int roundedAngle = (int)Math.Round(angle / (2 * Math.PI) * 4) + 2;
+                                collisions = new bool[] {false, false, false, false};
 
-                                CollisionDir state = CollisionDir.Bottom;
-                                float thing = 0;
+                                player.pos -= player.vel; //Checks player state before collision
 
-                                if (roundedAngle == 0)
+                                //Saves all positions and sizes of the collisionrectangles surrounding the player. Avoided rectangles since I wanted to preserve the decimals
+                                upperPos = player.pos + new Vector2(0, - Math.Abs(player.vel.Y));
+                                upperSize = new Vector2(player.size.X, Math.Abs(player.vel.Y));
+
+                                leftPos = player.pos + new Vector2(- Math.Abs(player.vel.X), 0);
+                                leftSize = new Vector2(Math.Abs(player.vel.X), player.size.Y);
+
+                                lowerPos = player.pos + new Vector2(0, player.size.Y);
+                                lowerSize = new Vector2(player.size.X, Math.Abs(player.vel.Y));
+
+                                rightPos = player.pos + new Vector2(player.size.X, 0);
+                                rightSize = new Vector2(Math.Abs(player.vel.X), player.size.Y);
+
+                                player.pos += player.vel;
+
+								collisions[0] = DetectCollision(upperPos, upperSize, block.pos, block.size);    //Upper
+                                collisions[1] = DetectCollision(leftPos, leftSize, block.pos, block.size);      //Left
+                                collisions[2] = DetectCollision(lowerPos, lowerSize, block.pos, block.size);    //Lower
+                                collisions[3] = DetectCollision(rightPos, rightSize, block.pos, block.size);    //Right
+
+                                if (collisions[0])
+								{
+                                    player.BlockCollision(CollisionDir.Upper, block.pos.Y);
+								}
+
+                                if(collisions[1])
                                 {
-                                    player.isOnGround = true;
-                                    state = CollisionDir.Top;
-                                    thing = block.pos.Y;
-                                }
-                                else
-                                {
-                                    player.isOnGround = false;
+                                    player.BlockCollision(CollisionDir.Left, block.pos.X);
                                 }
 
-                                if (roundedAngle == 1)
+                                if (collisions[2])
                                 {
-                                    state = CollisionDir.Left;
-                                    thing = block.pos.X;
+                                    player.BlockCollision(CollisionDir.Lower, block.pos.Y + block.size.Y);
                                 }
 
-                                if (roundedAngle == 2)
+                                if (collisions[3])
                                 {
-                                    state = CollisionDir.Bottom;
-                                    thing = block.pos.Y + block.size.Y;
+                                    player.BlockCollision(CollisionDir.Right, block.pos.X + block.size.X);
                                 }
 
-                                if (roundedAngle == 3)
-                                {
-                                    state = CollisionDir.Right;
-                                    thing = block.pos.X + block.size.X;
-                                }
-                                
-
-                                player.BlockCollision(state, thing);
-                                goto Break;
+                                goto help;
                             }
                         }
                     }
                 }
             }
-            Break:;
 
+        help:;
         }
+
+        public bool DetectCollision(Vector2 aPos, Vector2 aSize, Vector2 bPos, Vector2 bSize)
+		{
+            bool isCollision = false;
+
+            if ((aPos.X < bPos.X + bSize.X && aPos.X + aSize.X > bPos.X) && (aPos.Y < bPos.Y + bSize.Y && aPos.Y + aSize.Y > bPos.Y))
+				isCollision = true;
+			return isCollision;
+		}
 
         public void Draw(SpriteBatch _spriteBatch)
         {
             //_spriteBatch.DrawString(Game1.arial, state.ToString(), new Vector2(100, 100), Color.White);
 
-            //SKRIV UT 
+            _spriteBatch.Draw(Game1.publicPixel, new Rectangle(upperPos.ToPoint(), upperSize.ToPoint()), Color.Yellow);
+			_spriteBatch.Draw(Game1.publicPixel, new Rectangle(leftPos.ToPoint(), leftSize.ToPoint()), Color.Yellow);
+            if (collisions[0])
+			    _spriteBatch.Draw(Game1.publicPixel, new Rectangle(lowerPos.ToPoint(), lowerSize.ToPoint()), Color.Yellow);
+			_spriteBatch.Draw(Game1.publicPixel, new Rectangle(rightPos.ToPoint(), rightSize.ToPoint()), Color.Yellow);
+
         }
     }
 }
