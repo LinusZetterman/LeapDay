@@ -19,7 +19,7 @@ namespace LeapDay
         float gravAcc = 0.2f;
 
         int jumpsLeft = 2;
-        bool isOnGround = false;
+        public bool isOnGround = false;
         bool spaceIsPressed = false;
         bool run = true;
         int direction = 1;
@@ -39,7 +39,7 @@ namespace LeapDay
         public void Update(GameTime gt)
         {
             KeyboardState keyboardState = Keyboard.GetState();
-            
+
             HandleWallAndFloorCollisions(gameSize);
 
             HandleJumps(keyboardState);
@@ -54,7 +54,7 @@ namespace LeapDay
 
         private void HandleWallAndFloorCollisions(Point floor)
         {
-            //Floor collisions
+        
             if (pos.Y + size.Y > floor.Y)
             {
                 pos.Y = floor.Y - size.Y;
@@ -85,12 +85,39 @@ namespace LeapDay
             }
         }
 
-        public void BlockCollision(CollisionDir collisionDir)
+        public void BlockCollision(CollisionDir collisionDir, float thing)
         {
-            if (collisionDir == CollisionDir.Down )
-            {
+            //    if (collisionDir == CollisionDir.Top)
+            //    {
+            //        pos.Y = thing - size.Y;
+            //        isOnGround = true;
+            //        if (vel.Y > 0)
+            //            vel.Y = 0f;
+            //        jumpsLeft = 2;
+            //    }
+            //    if (collisionDir == CollisionDir.Left)
+            //    {
+            //        if (isOnGround)
+            //            run = true;
+            //        else
+            //            run = false;
 
-            }
+            //        direction = 1;
+            //    }
+
+            //    if (collisionDir == CollisionDir.Bottom)
+            //    {
+            //    }
+
+            //    if (collisionDir == CollisionDir.Right)
+            //    {
+            //        if (isOnGround)
+            //            run = true;
+            //        else
+            //            run = false;
+
+            //        direction = -1;
+            //    }
         }
 
         private void HandleJumps(KeyboardState keyboardState)
@@ -126,8 +153,8 @@ namespace LeapDay
 
     public enum CollisionDir
     {
-        Up,
-        Down,
+        Top,
+        Bottom,
         Left,
         Right
     }

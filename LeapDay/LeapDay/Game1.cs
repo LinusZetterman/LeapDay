@@ -15,6 +15,7 @@ namespace LeapDay
 		Texture2D pixel;
 
 		public static Vector2 basePos = new Vector2(0, 0);
+		public static SpriteFont arial;
 
 		Point tileNumber;
 		public static List<IGameObject> GameObjects = new List<IGameObject>();
@@ -37,17 +38,19 @@ namespace LeapDay
 		protected override void LoadContent()
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
-			_graphics.PreferredBackBufferWidth = 562;
+			_graphics.PreferredBackBufferWidth = 560 ;
 			_graphics.PreferredBackBufferHeight = 950;
 			_graphics.ApplyChanges();
+
+			arial = Content.Load<SpriteFont>("Arial");
 
 			pixel = new Texture2D(GraphicsDevice, 1, 1);
 			pixel.SetData(new[] {Color.White});
 			
-			map = new string[21];
+			map = new string[0];
 			map = CreateMap();
 
-			float sideLength = _graphics.PreferredBackBufferWidth / 14;
+			float sideLength = _graphics.PreferredBackBufferWidth / 16;
 			Vector2 blockSize = new Vector2(sideLength, sideLength);
 
 			GameObjects.Add(new Player(pixel, new Point(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight)));
@@ -63,6 +66,8 @@ namespace LeapDay
                     }
                 }
             }
+
+			GameObjects.Add(new CollisionHandler());
 		}
 
 		private string[] CreateMap()
@@ -71,8 +76,8 @@ namespace LeapDay
 				"00000G00000000", //0
 				"00000000000000", //1
 				"00000000000000", //2
-				"000000000G0000", //3
-				"00000000G00000", //4
+				"00000000000000", //3
+				"00000000000000", //4
 				"00000000000000", //5
 				"00000000000000", //6
 				"00000000000000", //7
@@ -82,12 +87,12 @@ namespace LeapDay
 				"00000000000000", //11
 				"00000000000000", //12
 				"00000000000000", //13
-				"00000GGGG00000", //14
-				"0000GGGGGG0000", //15
-				"0000GGGGGG0000", //16
-				"00000GGGG00000", //17
+				"00000000000000", //14
+				"00000000000000", //15
+				"00000000000000", //16
+				"00000000000000", //17
 				"00000000000000", //18
-				"00000000000000", //19
+				"0000000G000000", //19
 				"00000000000000", //20
 				"00000000000000", //21
 				"00000000000000", //22
@@ -98,7 +103,13 @@ namespace LeapDay
 				"00000000000000", //27
 				"00000000000000", //28
 				"00000000000000", //29
-			};
+				"GGGGGGGGGGGGGG",
+            };
+
+			for (int i = 0; i < _stringMap.Length; i ++)
+            {
+				_stringMap[i] = 'G' + _stringMap[i] + 'G';
+            }
 
 			tileNumber.X = _stringMap[0].Length;
 			tileNumber.Y = _stringMap.Length;
@@ -115,8 +126,6 @@ namespace LeapDay
             {
 				GameObjects[i].Update(gameTime);
             }
-
-			basePos.Y++;
 
 			base.Update(gameTime);
 		}

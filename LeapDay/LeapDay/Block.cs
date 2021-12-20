@@ -11,6 +11,7 @@ namespace LeapDay
 	class Block : IGameObject
 	{
 		public Vector2 pos;
+		public Vector2 startPos;
 		public Vector2 size;
         private Point index;
 		Texture2D texture;
@@ -19,7 +20,7 @@ namespace LeapDay
         {
 			texture = _texture;
 			size = _size;
-			pos = _pos;
+			startPos = _pos;
         }
 
         public void Die()
@@ -29,11 +30,11 @@ namespace LeapDay
 
 		public void Update(GameTime gt)
 		{
-			
+			pos = Game1.basePos + startPos;
 		}
 		public void Draw(SpriteBatch _spriteBatch)
 		{
-			_spriteBatch.Draw(texture, new Rectangle((pos + Game1.basePos).ToPoint(), size.ToPoint()), Color.Black);
+			_spriteBatch.Draw(texture, new Rectangle((pos).ToPoint(), size.ToPoint()), Color.Black);
 		}
 
 	}
