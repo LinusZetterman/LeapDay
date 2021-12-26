@@ -34,7 +34,7 @@ namespace LeapDay
 		}
 		public void Draw(SpriteBatch _spriteBatch)
 		{
-			_spriteBatch.Draw(texture, new Rectangle((pos).ToPoint(), size.ToPoint()), Color.Black);
+			_spriteBatch.Draw(texture, new Rectangle((pos).ToPoint(), size.ToPoint()), Color.White);
 		}
 
 	}

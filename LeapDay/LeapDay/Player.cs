@@ -9,11 +9,10 @@ namespace LeapDay
 {
     class Player : IGameObject
     {
-        Texture2D texture;
         public Point size = new Point(20, 20);
         Point gameSize;
         
-        public Vector2 pos = new Vector2(100, 100);
+        public Vector2 pos = new Vector2(100, 400);
         public Vector2 vel;
         float baseSpeed = 3;
         float gravAcc = 0.2f;
@@ -25,9 +24,8 @@ namespace LeapDay
         bool run = true;
         int direction = 1;
 
-        public Player(Texture2D _texture, Point _gameSize)
+        public Player(Point _gameSize)
         {
-            texture = _texture;
             gameSize = _gameSize;
             vel.X = baseSpeed;
         }
@@ -52,7 +50,7 @@ namespace LeapDay
                 isOnGround = false;
 			}
             
-            if (!isOnGround)
+            if (wasOnGround)
                 vel.Y += gravAcc;
             if (run)
                 pos.X += vel.X * direction;
@@ -97,20 +95,22 @@ namespace LeapDay
             if (collisionDir == CollisionDir.Upper)
             {
                 pos.Y = thing - size.Y;
-				vel.Y = Math.Min((float)vel.Y, 0.0f);
+                //vel.Y = Math.Min((float)vel.Y, 0.0f);
+                vel.Y = 0;
                 isOnGround = true;
                 jumpsLeft = 2;
                 run = true;
                 wasOnGround = true;
 			}
-            if (collisionDir == CollisionDir.Right)
+
+			if (collisionDir == CollisionDir.Right)
 			{
-                pos.X = thing - size.X;
-                direction = -1;
-                if (isOnGround)
-                    run = true;
-                else
-                    run = false;
+				pos.X = thing - size.X;
+				direction = -1;
+				if (wasOnGround)
+					run = true;
+				else
+					run = false;
 			}
 		}
 
@@ -138,9 +138,9 @@ namespace LeapDay
         public void Draw(SpriteBatch _spriteBatch)
         {
             if (jumpsLeft > 0)
-                _spriteBatch.Draw(texture, new Rectangle(pos.ToPoint(), size), Color.Red);
+                _spriteBatch.Draw(Game1.publicPixel, new Rectangle(pos.ToPoint(), size), Color.Red);
             else
-                _spriteBatch.Draw(texture, new Rectangle(pos.ToPoint(), size), Color.Blue);
+                _spriteBatch.Draw(Game1.publicPixel, new Rectangle(pos.ToPoint(), size), Color.Blue);
 
         }
     }

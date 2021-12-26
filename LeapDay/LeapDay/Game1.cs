@@ -15,7 +15,7 @@ namespace LeapDay
 		private SpriteBatch _spriteBatch;
 
 		public static Texture2D publicPixel;
-		Texture2D pixel;
+		Texture2D brick;
 
 		public static Vector2 basePos = new Vector2(0, 0);
 		public static SpriteFont arial;
@@ -50,8 +50,7 @@ namespace LeapDay
 			publicPixel = new Texture2D(GraphicsDevice, 1, 1);
 			publicPixel.SetData(new[] { Color.White });
 
-			pixel = new Texture2D(GraphicsDevice, 1, 1);
-			pixel.SetData(new[] {Color.White});
+			brick = Content.Load<Texture2D>("cassandra-brown-brickwork-1");
 			
 			map = new string[0];
 			map = CreateMap();
@@ -59,7 +58,7 @@ namespace LeapDay
 			float sideLength = _graphics.PreferredBackBufferWidth / 16;
 			Vector2 blockSize = new Vector2(sideLength, sideLength);
 
-			GameObjects.Add(new Player(pixel, new Point(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight)));
+			GameObjects.Add(new Player(new Point(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight)));
 
 			for (int i = 0; i < map.Length; i ++)
             {
@@ -68,7 +67,7 @@ namespace LeapDay
 					if (map[i][j] == 'G')
                     {
 						Vector2 pos = new Vector2(j * sideLength, i * sideLength + (_graphics.PreferredBackBufferHeight - tileNumber.Y * sideLength));
-						GameObjects.Add(new Ground(pixel, blockSize, pos));
+						GameObjects.Add(new Ground(brick, blockSize, pos));
                     }
                 }
             }
@@ -108,7 +107,7 @@ namespace LeapDay
 				"00000000000000", //26
 				"00000000000000", //27
 				"00000000000000", //28
-				"00000000000000", //29
+				"000000G0000000", //29
 				"GGGGGGGGGGGGGG",
 			};
 
