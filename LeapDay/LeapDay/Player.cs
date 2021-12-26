@@ -45,11 +45,10 @@ namespace LeapDay
 
             HandleJumps(keyboardState);
 
-            if (!wasOnGround)
+            if (!isOnGround)
 			{
-                isOnGround = false;
+                wasOnGround = false;
 			}
-            
             if (wasOnGround)
                 vel.Y += gravAcc;
             if (run)
@@ -95,8 +94,7 @@ namespace LeapDay
             if (collisionDir == CollisionDir.Upper)
             {
                 pos.Y = thing - size.Y;
-                //vel.Y = Math.Min((float)vel.Y, 0.0f);
-                vel.Y = 0;
+                vel.Y = Math.Min((float)vel.Y, 0.0f);
                 isOnGround = true;
                 jumpsLeft = 2;
                 run = true;
