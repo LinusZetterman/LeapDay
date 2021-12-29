@@ -31,9 +31,6 @@ namespace LeapDay
 
         public void Update(GameTime gt)
         {
-            bool wallCollision = false;
-            bool roofCollision = false;
-            bool floorCollision = false;
 
             //If collision causes future errors, maybe make a copy of the player pos so that the loop can continue from the original state. No idea how though but you'll figure something out <3
 

@@ -22,7 +22,6 @@ namespace LeapDay
         bool isOnGround = false; //Disables isOnGround if it has not been on ground for the entire round
         bool spaceIsPressed = false;
         bool run = true;
-        int direction = 1;
 
         public Player(Point _gameSize)
         {
@@ -49,7 +48,7 @@ namespace LeapDay
 			if (!wasOnGround)
                 vel.Y += gravAcc;
             if (run)
-                pos.X += vel.X * direction;
+                pos.X += vel.X;
             pos.Y += vel.Y;
         }
 
@@ -108,27 +107,33 @@ namespace LeapDay
 			if (collisionDir == CollisionDir.Right)
 			{
 				pos.X = thing - size.X;
-				direction = -1;
-				if (wasOnGround)
-					run = true;
-				else
-					run = false;
-
-                jumpsLeft = 2;
-
-            }
-            if (collisionDir == CollisionDir.Left)
-			{
-                pos.X = thing;
-                direction = 1;
+                vel.X = -baseSpeed;
+                
                 if (wasOnGround)
                     run = true;
                 else
                     run = false;
 
-                jumpsLeft = 2;
+                vel.Y = Math.Max(vel.Y, 0); //Restricts player from sliding upwards
 
+                jumpsLeft = 2;
             }
+
+            if (collisionDir == CollisionDir.Left)
+			{
+                pos.X = thing;
+                vel.X = baseSpeed;
+
+                if (wasOnGround)
+                    run = true;
+                else
+                    run = false;
+
+                vel.Y = Math.Max(vel.Y, 0); //Restricts player from sliding upwards
+
+                jumpsLeft = 2;
+            }
+
         }
 
         private void HandleJumps(KeyboardState keyboardState)
