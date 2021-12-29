@@ -18,8 +18,8 @@ namespace LeapDay
         float gravAcc = 0.2f;
 
         int jumpsLeft = 0;
-        public bool isOnGround = false;
-        bool wasOnGround = false; //Disables isOnGround if it has not been on ground for the entire round
+        public bool wasOnGround = false;
+        bool isOnGround = false; //Disables isOnGround if it has not been on ground for the entire round
         bool spaceIsPressed = false;
         bool run = true;
         int direction = 1;
@@ -37,20 +37,16 @@ namespace LeapDay
 
         public void Update(GameTime gt)
         {
-            wasOnGround = false;
-
             KeyboardState keyboardState = Keyboard.GetState();
 
             HandleWallAndFloorCollisions(gameSize);
 
             HandleJumps(keyboardState);
 
-            if (!wasOnGround)
-			{
-                isOnGround = false;
-			}
             
-            if (wasOnGround)
+            //wasOnGround = isOnGround;
+
+			if (!wasOnGround)
                 vel.Y += gravAcc;
             if (run)
                 pos.X += vel.X * direction;
@@ -92,15 +88,21 @@ namespace LeapDay
 
         public void BlockCollision(CollisionDir collisionDir, float thing)
         {
+            isOnGround = false; //Makes sure isOnGround is false as a base case, which is the whole reason for wasOnGround
+            
             if (collisionDir == CollisionDir.Upper)
             {
                 pos.Y = thing - size.Y;
-                //vel.Y = Math.Min((float)vel.Y, 0.0f);
-                vel.Y = 0;
-                isOnGround = true;
-                jumpsLeft = 2;
-                run = true;
-                wasOnGround = true;
+				vel.Y = Math.Min((float)vel.Y, 0.0f);
+				jumpsLeft = 2;
+				run = true;
+				isOnGround = true;
+			}
+
+            if (collisionDir == CollisionDir.Lower)
+			{
+                pos.Y = thing;
+				vel.Y = 0;
 			}
 
 			if (collisionDir == CollisionDir.Right)
@@ -111,8 +113,23 @@ namespace LeapDay
 					run = true;
 				else
 					run = false;
-			}
-		}
+
+                jumpsLeft = 2;
+
+            }
+            if (collisionDir == CollisionDir.Left)
+			{
+                pos.X = thing;
+                direction = 1;
+                if (wasOnGround)
+                    run = true;
+                else
+                    run = false;
+
+                jumpsLeft = 2;
+
+            }
+        }
 
         private void HandleJumps(KeyboardState keyboardState)
         {
@@ -137,10 +154,14 @@ namespace LeapDay
 
         public void Draw(SpriteBatch _spriteBatch)
         {
-            if (jumpsLeft > 0)
-                _spriteBatch.Draw(Game1.publicPixel, new Rectangle(pos.ToPoint(), size), Color.Red);
-            else
-                _spriteBatch.Draw(Game1.publicPixel, new Rectangle(pos.ToPoint(), size), Color.Blue);
+            Color color = Color.Blue;
+            if (jumpsLeft >= 2)
+                color = Color.Red;
+            else if (jumpsLeft >= 1) 
+                color = Color.Purple;
+
+            _spriteBatch.Draw(Game1.publicPixel, new Rectangle(pos.ToPoint(), size), color);
+
 
         }
     }

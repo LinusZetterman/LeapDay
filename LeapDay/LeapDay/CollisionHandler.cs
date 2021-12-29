@@ -76,9 +76,9 @@ namespace LeapDay
 
                                 pPos += pVel;
 
-								collisions[0] = DetectCollision(upperPos, upperSize, block.pos, block.size);    //Upper
+                                collisions[0] = DetectCollision(lowerPos, lowerSize, block.pos, block.size);    //Lower
                                 collisions[1] = DetectCollision(leftPos, leftSize, block.pos, block.size);      //Left
-                                collisions[2] = DetectCollision(lowerPos, lowerSize, block.pos, block.size);    //Lower
+								collisions[2] = DetectCollision(upperPos, upperSize, block.pos, block.size);    //Upper
                                 collisions[3] = DetectCollision(rightPos, rightSize, block.pos, block.size);    //Right
 
                                 if (collisions[0])
@@ -88,7 +88,7 @@ namespace LeapDay
 
                                 if(collisions[1])
                                 {
-                                    player.BlockCollision(CollisionDir.Left, block.pos.X);
+                                    player.BlockCollision(CollisionDir.Left, block.pos.X + block.size.X);
                                 }
 
                                 if (collisions[2])
@@ -98,17 +98,15 @@ namespace LeapDay
 
                                 if (collisions[3])
                                 {
-                                    player.BlockCollision(CollisionDir.Right, block.pos.X + block.size.X);
+                                    player.BlockCollision(CollisionDir.Right, block.pos.X);
                                 }
 
-                                //goto help;
                             }
                         }
                     }
                 }
             }
 
-        //help:;
         }
 
         public bool DetectCollision(Vector2 aPos, Vector2 aSize, Vector2 bPos, Vector2 bSize)
@@ -124,11 +122,11 @@ namespace LeapDay
         {
             //_spriteBatch.DrawString(Game1.arial, state.ToString(), new Vector2(100, 100), Color.White);
 
-            //_spriteBatch.Draw(Game1.publicPixel, new Rectangle(upperPos.ToPoint(), upperSize.ToPoint()), Color.Yellow);
-			//_spriteBatch.Draw(Game1.publicPixel, new Rectangle(leftPos.ToPoint(), leftSize.ToPoint()), Color.Yellow);
-			//_spriteBatch.Draw(Game1.publicPixel, new Rectangle(lowerPos.ToPoint(), lowerSize.ToPoint()), Color.Yellow);
-			//_spriteBatch.Draw(Game1.publicPixel, new Rectangle(rightPos.ToPoint(), rightSize.ToPoint()), Color.Yellow);
+            _spriteBatch.Draw(Game1.publicPixel, new Rectangle(upperPos.ToPoint(), upperSize.ToPoint()), Color.Yellow);
+			_spriteBatch.Draw(Game1.publicPixel, new Rectangle(leftPos.ToPoint(), leftSize.ToPoint()), Color.Yellow);
+			_spriteBatch.Draw(Game1.publicPixel, new Rectangle(lowerPos.ToPoint(), lowerSize.ToPoint()), Color.Yellow);
+			_spriteBatch.Draw(Game1.publicPixel, new Rectangle(rightPos.ToPoint(), rightSize.ToPoint()), Color.Yellow);
 
-        }
+		}
     }
 }
