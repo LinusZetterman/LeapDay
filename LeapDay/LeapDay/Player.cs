@@ -9,10 +9,11 @@ namespace LeapDay
 {
     class Player : IGameObject
     {
+        Texture2D texture;
         public Point size = new Point(20, 20);
         Point gameSize;
         
-        public Vector2 pos = new Vector2(100, 400);
+        public Vector2 pos = new Vector2(100, 100);
         public Vector2 vel;
         float baseSpeed = 3;
         float gravAcc = 0.2f;
@@ -23,8 +24,9 @@ namespace LeapDay
         bool spaceIsPressed = false;
         bool run = true;
 
-        public Player(Point _gameSize)
+        public Player(Texture2D _texture, Point _gameSize)
         {
+            texture = _texture;
             gameSize = _gameSize;
             vel.X = baseSpeed;
         }
@@ -103,8 +105,7 @@ namespace LeapDay
                 pos.Y = thing;
 				vel.Y = 0;
 			}
-
-			if (collisionDir == CollisionDir.Right)
+            if (collisionDir == CollisionDir.Right)
 			{
 				pos.X = thing - size.X;
                 vel.X = -baseSpeed;

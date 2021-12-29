@@ -37,41 +37,36 @@ namespace LeapDay
             for (int i = 0; i < Game1.GameObjects.Count; i++)
             {
                 //Block collisions
-                if (Game1.GameObjects[i] is Player)
+                if (Game1.GameObjects[i] is Block)
                 {
-                    Player player = (Player)Game1.GameObjects[i];
-
-                    Vector2 pPos = player.pos;
-                    Vector2 pVel = player.vel;
-                    Vector2 pSize = player.size.ToVector2();
-                    
+                    Block block = (Block)Game1.GameObjects[i];
                     for (int j = 0; j < Game1.GameObjects.Count; j++)
                     {
-                        if (Game1.GameObjects[j] is Block)
+                        if (Game1.GameObjects[j] is Player)
                         {
-                            Block block = (Block)Game1.GameObjects[j];
-                            bool isBlockCollision = DetectCollision(pPos, pSize, block.pos, block.size); //Checks if player and block collision är 
+                            Player player = (Player)Game1.GameObjects[j];
+                            bool isBlockCollision = DetectCollision(player.pos, player.size.ToVector2(), block.pos, block.size); //Checks if player and block collision är 
 
                             if (isBlockCollision) 
                             {
                                 collisions = new bool[] {false, false, false, false};
 
-                                pPos -= pVel; //Checks player state before collision
+                                player.pos -= player.vel; //Checks player state before collision
 
                                 //Saves all positions and sizes of the collisionrectangles surrounding the player. Avoided rectangles since I wanted to preserve the decimals
-                                upperPos = pPos + new Vector2(0, - Math.Abs(pVel.Y));
-                                upperSize = new Vector2(pSize.X, Math.Abs(pVel.Y));
+                                upperPos = player.pos + new Vector2(0, - Math.Abs(player.vel.Y));
+                                upperSize = new Vector2(player.size.X, Math.Abs(player.vel.Y));
 
-                                leftPos = pPos + new Vector2(- Math.Abs(pVel.X), 0);
-                                leftSize = new Vector2(Math.Abs(pVel.X), pSize.Y);
+                                leftPos = player.pos + new Vector2(- Math.Abs(player.vel.X), 0);
+                                leftSize = new Vector2(Math.Abs(player.vel.X), player.size.Y);
 
-                                lowerPos = pPos + new Vector2(0, pSize.Y);
-                                lowerSize = new Vector2(pSize.X, Math.Abs(pVel.Y));
+                                lowerPos = player.pos + new Vector2(0, player.size.Y);
+                                lowerSize = new Vector2(player.size.X, Math.Abs(player.vel.Y));
 
-                                rightPos = pPos + new Vector2(pSize.X, 0);
-                                rightSize = new Vector2(Math.Abs(pVel.X), pSize.Y);
+                                rightPos = player.pos + new Vector2(player.size.X, 0);
+                                rightSize = new Vector2(Math.Abs(player.vel.X), player.size.Y);
 
-                                pPos += pVel;
+                                player.pos += player.vel;
 
                                 collisions[0] = DetectCollision(lowerPos, lowerSize, block.pos, block.size);    //Lower
                                 collisions[1] = DetectCollision(leftPos, leftSize, block.pos, block.size);      //Left
